@@ -1,11 +1,30 @@
 FROM pypy:3-slim
+
 LABEL maintainer "Jacob <sirrkitt@gmail.com>"
 
-RUN mkdir /config /data
+ENV UIDS="5232"
+ENV GIDS="5232"
 
-RUN pypy3 -m pip install --upgrade radicale https://github.com/Unrud/RadicaleIMAP/archive/master.zip
+COPY entrypoint.sh /entrypoint.sh
+
+RUN mkdir /config /data
+RUN set -eux; \
+	apt update; \
+	apt install -y gosu; \
+	rm -rf /var/lib/apt/lists/*; \
+	gosu nobody true
+
+RUN pypy3 -m pip install --upgrade radicale https://github.com/Unrud/RadicaleIMAP/archive/master.zip &&\
+	useradd --system --home-dir /data --shell /sbin/nologin radicale &&\
+	chown -R radicale:radicale /config /data &&\
+	chmod +x /entrypoint.sh
+
 
 VOLUME /config
 VOLUME /data
 
-ENTRYPOINT [ "/usr/local/bin/radicale", "--config", "/config/radicale.conf" ]
+
+EXPOSE 5232
+
+ENTRYPOINT [ "/entrypoint.sh" ]
+CMD [ "/opt/pypy/bin/radicale --config /config/radicale.conf --storage-filesystem-folder=/data/collections" ]
