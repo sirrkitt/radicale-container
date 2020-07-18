@@ -1,9 +1,9 @@
-FROM jamiehewland/alpine-pypy:3-alpine3.11
+FROM pypy:3-slim
 LABEL maintainer "Jacob <sirrkitt@gmail.com>"
 
 RUN mkdir /config /data
 
-RUN pypy3 -m pip install --upgrade radicale radicale-imap
+RUN pypy3 -m pip install --upgrade radicale https://github.com/Unrud/RadicaleIMAP/archive/master.zip
 
 VOLUME /config
 VOLUME /data
