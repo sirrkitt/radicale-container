@@ -27,4 +27,3 @@ VOLUME /data
 EXPOSE 5232
 
 ENTRYPOINT [ "/entrypoint.sh" ]
-CMD [ "/opt/pypy/bin/radicale --config /config/radicale.conf --storage-filesystem-folder=/data" ]

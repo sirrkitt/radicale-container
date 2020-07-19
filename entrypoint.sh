@@ -17,4 +17,4 @@ groupmod -g $GIDS radicale
 
 chown -R $UIDS:$GIDS /data || { echo 'Unable to read/write data folder' ; exit 1; }
 
-exec /usr/sbin/gosu radicale "$@"
+exec /usr/sbin/gosu radicale '/opt/pypy/bin/radicale --config /config/radicale.conf'
