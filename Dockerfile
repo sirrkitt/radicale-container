@@ -14,11 +14,10 @@ RUN set -eux; \
 	rm -rf /var/lib/apt/lists/*; \
 	gosu nobody true
 
-RUN pypy3 -m pip install --upgrade radicale https://github.com/Unrud/RadicaleIMAP/archive/master.zip &&\
+RUN pypy3 -m pip install --upgrade https://github.com/Kozea/Radicale/archive/3.0.6.zip https://github.com/Unrud/RadicaleIMAP/archive/master.zip &&\
 	useradd --system --home-dir /data --shell /sbin/nologin radicale &&\
 	chown -R radicale:radicale /config /data &&\
 	chmod +x /entrypoint.sh
-
 
 VOLUME /config
 VOLUME /data
