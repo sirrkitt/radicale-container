@@ -4,17 +4,23 @@ if [ ! -w "/config/" ]
 then
 	echo "Unable to read or write config directory!"
 	exit 1
-
-elif [ ! -r "/config/radicale.conf" ]
+fi
+if [ ! -r "/config/radicale.conf" ]
 then
-	echo "No config detected/readable. Please put a config file into the config directory"
-	exit 1
+	echo "No config detected. Adding generic config"
+	cp /radicale.conf /config/radicale.conf
+fi
+if [ ! -r "/config/gunicorn.py" ]
+then
+	echo "Gunicorn config not detected. Adding generic config"
+	cp /gunicorn.py /config/gunicorn.py
 fi
 
+groupadd --system --gid $GIDS radicale
+useradd --system --home-dir /data -M --shell /sbin/nologin --uid $UIDS -g radicale radicale
+
 # make sure we can write to data
-usermod -u $UIDS radicale
-groupmod -g $GIDS radicale
-
 chown -R $UIDS:$GIDS /data || { echo 'Unable to read/write data folder' ; exit 1; }
+chmod -R o= /data
 
-exec /usr/sbin/gosu radicale /opt/pypy/bin/radicale --config /config/radicale.conf
+exec /opt/pypy/bin/gunicorn -c /config/gunicorn.py -u radicale -g radicale --env 'RADICALE_CONFIG=/config/radicale.conf' radicale
