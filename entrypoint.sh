@@ -16,11 +16,11 @@ then
 	cp /gunicorn.py /config/gunicorn.py
 fi
 
-groupadd --system --gid $GIDS radicale
-useradd --system --home-dir /data -M --shell /sbin/nologin --uid $UIDS -g radicale radicale
+groupadd --system --gid $PGID radicale
+useradd --system --home-dir /data -M --shell /sbin/nologin --uid $PUID -g radicale radicale
 
 # make sure we can write to data & config & socket
-chown -R $UIDS:$GIDS /data /config /socket || { echo 'Unable to read/write data folder' ; exit 1; }
+chown -R $PUID:$PGID /data /config /socket || { echo 'Unable to read/write data folder' ; exit 1; }
 chmod -R o= /data
 
 exec /opt/pypy/bin/gunicorn -c /config/gunicorn.py -u radicale -g radicale --env 'RADICALE_CONFIG=/config/radicale.conf' radicale
